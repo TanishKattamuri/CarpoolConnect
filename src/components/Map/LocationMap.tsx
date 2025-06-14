@@ -19,7 +19,6 @@ const LocationMap = ({ onLocationSelect, mode, onClose, initialLocation }: Locat
   // Simulate map initialization and interaction
   useEffect(() => {
     if (mapRef.current) {
-      // Simulate loading a map (in real implementation, this would initialize Google Maps or Mapbox)
       console.log('Map initialized for', mode);
     }
   }, [mode]);
@@ -30,7 +29,7 @@ const LocationMap = ({ onLocationSelect, mode, onClose, initialLocation }: Locat
     const y = event.clientY - rect.top;
     
     // Convert click coordinates to lat/lng (simplified simulation)
-    const lat = 40.7128 + (y - 200) * 0.001; // Simulate NYC area
+    const lat = 40.7128 + (y - 200) * 0.001;
     const lng = -74.0060 + (x - 200) * 0.001;
     
     setSelectedLocation({ lat, lng });
@@ -90,21 +89,45 @@ const LocationMap = ({ onLocationSelect, mode, onClose, initialLocation }: Locat
         <div 
           ref={mapRef}
           onClick={handleMapClick}
-          className="w-full h-96 bg-gradient-to-br from-green-100 to-blue-100 relative cursor-crosshair"
+          className="w-full h-96 bg-green-50 relative cursor-crosshair overflow-hidden"
           style={{
             backgroundImage: `
-              radial-gradient(circle at 20% 30%, rgba(34, 197, 94, 0.2) 0%, transparent 50%),
-              radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
-              linear-gradient(45deg, rgba(156, 163, 175, 0.1) 25%, transparent 25%),
-              linear-gradient(-45deg, rgba(156, 163, 175, 0.1) 25%, transparent 25%)
+              linear-gradient(rgba(34, 197, 94, 0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(34, 197, 94, 0.1) 1px, transparent 1px),
+              radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 75% 75%, rgba(34, 197, 94, 0.3) 0%, transparent 50%)
             `,
-            backgroundSize: '40px 40px, 40px 40px, 20px 20px, 20px 20px'
+            backgroundSize: '20px 20px, 20px 20px, 400px 400px, 400px 400px'
           }}
         >
+          {/* Simulated Streets */}
+          <div className="absolute inset-0">
+            {/* Horizontal Streets */}
+            <div className="absolute top-1/4 left-0 right-0 h-1 bg-gray-300"></div>
+            <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-300"></div>
+            <div className="absolute top-3/4 left-0 right-0 h-1 bg-gray-300"></div>
+            
+            {/* Vertical Streets */}
+            <div className="absolute left-1/4 top-0 bottom-0 w-1 bg-gray-300"></div>
+            <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gray-300"></div>
+            <div className="absolute left-3/4 top-0 bottom-0 w-1 bg-gray-300"></div>
+          </div>
+
+          {/* Simulated Buildings */}
+          <div className="absolute top-16 left-16 w-8 h-8 bg-blue-400 rounded shadow"></div>
+          <div className="absolute top-24 right-20 w-12 h-10 bg-red-400 rounded shadow"></div>
+          <div className="absolute bottom-20 left-1/3 w-10 h-12 bg-yellow-400 rounded shadow"></div>
+          <div className="absolute bottom-16 right-1/4 w-8 h-8 bg-purple-400 rounded shadow"></div>
+          <div className="absolute top-1/3 left-1/2 w-6 h-6 bg-green-400 rounded shadow"></div>
+
+          {/* Parks/Green Spaces */}
+          <div className="absolute top-12 right-12 w-16 h-12 bg-green-300 rounded-full opacity-60"></div>
+          <div className="absolute bottom-12 left-12 w-12 h-12 bg-green-300 rounded-full opacity-60"></div>
+
           {/* Map Pin Overlay */}
           {selectedLocation && (
             <div 
-              className="absolute transform -translate-x-1/2 -translate-y-full"
+              className="absolute transform -translate-x-1/2 -translate-y-full z-10"
               style={{
                 left: `${(selectedLocation.lng + 74.0060) * 1000 + 200}px`,
                 top: `${200 - (selectedLocation.lat - 40.7128) * 1000}px`
@@ -115,14 +138,14 @@ const LocationMap = ({ onLocationSelect, mode, onClose, initialLocation }: Locat
           )}
           
           {/* Center Crosshair */}
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <div className="w-6 h-6 border-2 border-gray-400 rounded-full bg-white/80 flex items-center justify-center">
-              <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+            <div className="w-6 h-6 border-2 border-gray-600 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+              <div className="w-2 h-2 bg-gray-700 rounded-full"></div>
             </div>
           </div>
           
           {/* Tap to select instruction */}
-          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white px-4 py-2 rounded-full shadow-lg">
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white px-4 py-2 rounded-full shadow-lg z-10">
             <p className="text-sm text-gray-600">Tap anywhere to select location</p>
           </div>
         </div>

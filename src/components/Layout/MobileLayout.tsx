@@ -1,6 +1,7 @@
+
 import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, MessageCircle, User, Plus } from 'lucide-react';
+import { Home, MessageCircle, User } from 'lucide-react';
 
 interface MobileLayoutProps {
   children: React.ReactNode;
@@ -17,8 +18,6 @@ const MobileLayout = ({ children, activeTab }: MobileLayoutProps) => {
   
   const navItems = [
     { id: 'home', icon: Home, label: 'Home', path: '/' },
-    { id: 'search', icon: Search, label: 'Find Rides', path: '/find-rides' },
-    { id: 'create', icon: Plus, label: 'Offer Ride', path: '/offer-ride' },
     { id: 'messages', icon: MessageCircle, label: 'Messages', path: '/messages' },
     { id: 'profile', icon: User, label: 'Profile', path: '/profile' },
   ];

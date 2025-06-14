@@ -1,8 +1,11 @@
 
 import React from 'react';
 import { Car, Users, DollarSign, Leaf, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+
   const features = [
     {
       icon: Car,
@@ -37,11 +40,17 @@ const HeroSection = () => {
 
         {/* Quick Action Buttons */}
         <div className="space-y-3 mb-8">
-          <button className="w-full bg-white text-blue-700 font-semibold py-4 px-6 rounded-xl shadow-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2">
+          <button 
+            onClick={() => navigate('/find-rides')}
+            className="w-full bg-white text-blue-700 font-semibold py-4 px-6 rounded-xl shadow-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
+          >
             <Car size={20} />
             <span>Find a Ride</span>
           </button>
-          <button className="w-full bg-blue-500 text-white font-semibold py-4 px-6 rounded-xl border-2 border-blue-400 hover:bg-blue-400 transition-colors flex items-center justify-center space-x-2">
+          <button 
+            onClick={() => navigate('/offer-ride')}
+            className="w-full bg-blue-500 text-white font-semibold py-4 px-6 rounded-xl border-2 border-blue-400 hover:bg-blue-400 transition-colors flex items-center justify-center space-x-2"
+          >
             <Plus size={20} />
             <span>Offer a Ride</span>
           </button>
