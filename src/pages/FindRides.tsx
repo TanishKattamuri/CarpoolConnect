@@ -1,38 +1,30 @@
 
 import React, { useState } from 'react';
 import MobileLayout from '../components/Layout/MobileLayout';
-import { Search, MapPin, Calendar, Users } from 'lucide-react';
+import { Search, MapPin, Calendar, Filter } from 'lucide-react';
 import RideCard from '../components/Rides/RideCard';
+import RideBookingDialog from '../components/Rides/RideBookingDialog';
+import LoadingSpinner from '../components/ui/loading-spinner';
+import { useRideSearch } from '../hooks/useRideSearch';
+import { Button } from '@/components/ui/button';
 
 const FindRides = () => {
   const [fromLocation, setFromLocation] = useState('');
   const [toLocation, setToLocation] = useState('');
   const [date, setDate] = useState('');
+  const [selectedRide, setSelectedRide] = useState<any>(null);
+  const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false);
+  
+  const { rides, isLoading, hasSearched, searchRides } = useRideSearch();
 
-  const sampleRides = [
-    {
-      id: '1',
-      driverName: 'Sarah M.',
-      driverRating: 4.8,
-      from: 'Downtown Seattle',
-      to: 'Microsoft Campus',
-      departureTime: '8:00 AM',
-      price: 12,
-      availableSeats: 2,
-      isRecurring: true
-    },
-    {
-      id: '2',
-      driverName: 'Mike R.',
-      driverRating: 4.9,
-      from: 'Capitol Hill',
-      to: 'Amazon HQ',
-      departureTime: '8:30 AM',
-      price: 8,
-      availableSeats: 1,
-      isRecurring: true
-    }
-  ];
+  const handleSearch = () => {
+    searchRides({ from: fromLocation, to: toLocation, date });
+  };
+
+  const handleBookRide = (ride: any) => {
+    setSelectedRide(ride);
+    setIsBookingDialogOpen(true);
+  };
 
   return (
     <MobileLayout>
@@ -75,22 +67,74 @@ const FindRides = () => {
               />
             </div>
             
-            <button className="w-full bg-white text-blue-600 font-semibold py-3 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2">
-              <Search size={20} />
-              <span>Search Rides</span>
-            </button>
+            <Button 
+              onClick={handleSearch}
+              disabled={isLoading}
+              className="w-full bg-white text-blue-600 font-semibold py-3 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
+            >
+              {isLoading ? (
+                <>
+                  <LoadingSpinner size="sm" />
+                  <span>Searching...</span>
+                </>
+              ) : (
+                <>
+                  <Search size={20} />
+                  <span>Search Rides</span>
+                </>
+              )}
+            </Button>
           </div>
         </div>
 
         {/* Results */}
         <div className="px-4 py-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Available Rides</h2>
-          <div className="space-y-4">
-            {sampleRides.map((ride) => (
-              <RideCard key={ride.id} ride={ride} />
-            ))}
-          </div>
+          {hasSearched && (
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900">
+                {rides.length > 0 ? `${rides.length} Rides Found` : 'No Rides Found'}
+              </h2>
+              <Button variant="outline" size="sm">
+                <Filter size={16} className="mr-1" />
+                Filter
+              </Button>
+            </div>
+          )}
+          
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <LoadingSpinner size="lg" className="mx-auto mb-4" />
+                <p className="text-gray-600">Finding rides for you...</p>
+              </div>
+            </div>
+          ) : rides.length > 0 ? (
+            <div className="space-y-4">
+              {rides.map((ride) => (
+                <RideCard 
+                  key={ride.id} 
+                  ride={ride} 
+                  onBookRide={() => handleBookRide(ride)}
+                />
+              ))}
+            </div>
+          ) : hasSearched ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600 mb-4">No rides found for your search criteria.</p>
+              <p className="text-sm text-gray-500">Try adjusting your search or check back later.</p>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600">Enter your trip details above to find available rides.</p>
+            </div>
+          )}
         </div>
+
+        <RideBookingDialog
+          ride={selectedRide}
+          isOpen={isBookingDialogOpen}
+          onClose={() => setIsBookingDialogOpen(false)}
+        />
       </div>
     </MobileLayout>
   );

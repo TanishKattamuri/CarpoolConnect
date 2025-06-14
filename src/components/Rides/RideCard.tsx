@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { MapPin, Clock, DollarSign, User, Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface RideCardProps {
   ride: {
@@ -14,9 +15,10 @@ interface RideCardProps {
     availableSeats: number;
     isRecurring?: boolean;
   };
+  onBookRide?: () => void;
 }
 
-const RideCard = ({ ride }: RideCardProps) => {
+const RideCard = ({ ride, onBookRide }: RideCardProps) => {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4 hover:shadow-md transition-shadow">
       {/* Driver Info */}
@@ -53,7 +55,7 @@ const RideCard = ({ ride }: RideCardProps) => {
       </div>
 
       {/* Time and Price */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-1 text-gray-600">
             <Clock size={16} />
@@ -70,9 +72,12 @@ const RideCard = ({ ride }: RideCardProps) => {
       </div>
 
       {/* Book Button */}
-      <button className="w-full mt-4 bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-700 transition-colors">
+      <Button 
+        onClick={onBookRide}
+        className="w-full bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-700 transition-colors"
+      >
         Request Ride
-      </button>
+      </Button>
     </div>
   );
 };

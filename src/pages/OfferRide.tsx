@@ -1,9 +1,15 @@
 
 import React, { useState } from 'react';
 import MobileLayout from '../components/Layout/MobileLayout';
-import { MapPin, Calendar, Clock, DollarSign, Users } from 'lucide-react';
+import { MapPin, Calendar, Clock, Users, DollarSign, Car } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
+import LoadingSpinner from '../components/ui/loading-spinner';
 
 const OfferRide = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     from: '',
     to: '',
@@ -11,141 +17,241 @@ const OfferRide = () => {
     time: '',
     seats: '1',
     price: '',
-    recurring: false
+    recurring: false,
+    carModel: '',
+    description: ''
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Ride offered:', formData);
-    // Handle form submission
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.from.trim()) newErrors.from = 'Pickup location is required';
+    if (!formData.to.trim()) newErrors.to = 'Destination is required';
+    if (!formData.date) newErrors.date = 'Date is required';
+    if (!formData.time) newErrors.time = 'Time is required';
+    if (!formData.price || Number(formData.price) <= 0) newErrors.price = 'Valid price is required';
+    if (!formData.carModel.trim()) newErrors.carModel = 'Car model is required';
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-    }));
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      toast({
+        title: "Please fix the errors",
+        description: "Check the highlighted fields and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    toast({
+      title: "Ride Offered Successfully!",
+      description: "Your ride has been posted. You'll receive notifications when passengers request to join.",
+    });
+    
+    // Reset form
+    setFormData({
+      from: '',
+      to: '',
+      date: '',
+      time: '',
+      seats: '1',
+      price: '',
+      recurring: false,
+      carModel: '',
+      description: ''
+    });
+    setErrors({});
+    setIsSubmitting(false);
+  };
+
+  const handleInputChange = (field: string, value: string | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
   };
 
   return (
     <MobileLayout>
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
-        <div className="bg-blue-600 text-white px-4 py-6">
+        <div className="bg-green-600 text-white px-4 py-6">
           <h1 className="text-2xl font-bold">Offer a Ride</h1>
-          <p className="text-blue-100 mt-2">Share your journey with others</p>
+          <p className="text-green-100 mt-1">Share your journey and earn money</p>
         </div>
 
         {/* Form */}
         <div className="px-4 py-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="relative">
-              <label className="block text-sm font-medium text-gray-700 mb-2">From</label>
-              <MapPin size={20} className="absolute left-3 top-11 text-gray-400" />
-              <input
-                type="text"
-                name="from"
-                value={formData.from}
-                onChange={handleChange}
-                placeholder="Starting location"
-                className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Route Information */}
+            <div className="bg-white rounded-lg p-4 space-y-4">
+              <h2 className="font-semibold text-gray-900 flex items-center">
+                <MapPin className="mr-2" size={20} />
+                Route Details
+              </h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="from">From</Label>
+                  <Input
+                    id="from"
+                    placeholder="Pickup location"
+                    value={formData.from}
+                    onChange={(e) => handleInputChange('from', e.target.value)}
+                    className={errors.from ? 'border-red-500' : ''}
+                  />
+                  {errors.from && <p className="text-red-500 text-sm mt-1">{errors.from}</p>}
+                </div>
+                
+                <div>
+                  <Label htmlFor="to">To</Label>
+                  <Input
+                    id="to"
+                    placeholder="Destination"
+                    value={formData.to}
+                    onChange={(e) => handleInputChange('to', e.target.value)}
+                    className={errors.to ? 'border-red-500' : ''}
+                  />
+                  {errors.to && <p className="text-red-500 text-sm mt-1">{errors.to}</p>}
+                </div>
+              </div>
             </div>
 
-            <div className="relative">
-              <label className="block text-sm font-medium text-gray-700 mb-2">To</label>
-              <MapPin size={20} className="absolute left-3 top-11 text-gray-400" />
-              <input
-                type="text"
-                name="to"
-                value={formData.to}
-                onChange={handleChange}
-                placeholder="Destination"
-                className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="relative">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                <Calendar size={20} className="absolute left-3 top-11 text-gray-400" />
+            {/* Time & Date */}
+            <div className="bg-white rounded-lg p-4 space-y-4">
+              <h2 className="font-semibold text-gray-900 flex items-center">
+                <Calendar className="mr-2" size={20} />
+                When
+              </h2>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="date">Date</Label>
+                  <Input
+                    id="date"
+                    type="date"
+                    value={formData.date}
+                    onChange={(e) => handleInputChange('date', e.target.value)}
+                    className={errors.date ? 'border-red-500' : ''}
+                  />
+                  {errors.date && <p className="text-red-500 text-sm mt-1">{errors.date}</p>}
+                </div>
+                
+                <div>
+                  <Label htmlFor="time">Time</Label>
+                  <Input
+                    id="time"
+                    type="time"
+                    value={formData.time}
+                    onChange={(e) => handleInputChange('time', e.target.value)}
+                    className={errors.time ? 'border-red-500' : ''}
+                  />
+                  {errors.time && <p className="text-red-500 text-sm mt-1">{errors.time}</p>}
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-2">
                 <input
-                  type="date"
-                  name="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
+                  type="checkbox"
+                  id="recurring"
+                  checked={formData.recurring}
+                  onChange={(e) => handleInputChange('recurring', e.target.checked)}
+                  className="rounded"
+                />
+                <Label htmlFor="recurring" className="text-sm">This is a recurring ride</Label>
+              </div>
+            </div>
+
+            {/* Ride Details */}
+            <div className="bg-white rounded-lg p-4 space-y-4">
+              <h2 className="font-semibold text-gray-900 flex items-center">
+                <Car className="mr-2" size={20} />
+                Ride Details
+              </h2>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="seats">Available Seats</Label>
+                  <select
+                    id="seats"
+                    value={formData.seats}
+                    onChange={(e) => handleInputChange('seats', e.target.value)}
+                    className="w-full p-2 border rounded-lg"
+                  >
+                    {[1, 2, 3, 4, 5, 6].map(num => (
+                      <option key={num} value={num}>{num} seat{num > 1 ? 's' : ''}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="price">Price per seat ($)</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    placeholder="0"
+                    min="0"
+                    step="0.50"
+                    value={formData.price}
+                    onChange={(e) => handleInputChange('price', e.target.value)}
+                    className={errors.price ? 'border-red-500' : ''}
+                  />
+                  {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="carModel">Car Model</Label>
+                <Input
+                  id="carModel"
+                  placeholder="e.g., Toyota Camry, Honda Civic"
+                  value={formData.carModel}
+                  onChange={(e) => handleInputChange('carModel', e.target.value)}
+                  className={errors.carModel ? 'border-red-500' : ''}
+                />
+                {errors.carModel && <p className="text-red-500 text-sm mt-1">{errors.carModel}</p>}
+              </div>
+              
+              <div>
+                <Label htmlFor="description">Additional Notes (Optional)</Label>
+                <textarea
+                  id="description"
+                  rows={3}
+                  placeholder="Any special instructions or preferences..."
+                  value={formData.description}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
+                  className="w-full p-2 border rounded-lg resize-none"
                 />
               </div>
-
-              <div className="relative">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
-                <Clock size={20} className="absolute left-3 top-11 text-gray-400" />
-                <input
-                  type="time"
-                  name="time"
-                  value={formData.time}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-              </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="relative">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Available Seats</label>
-                <Users size={20} className="absolute left-3 top-11 text-gray-400" />
-                <select
-                  name="seats"
-                  value={formData.seats}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="1">1 seat</option>
-                  <option value="2">2 seats</option>
-                  <option value="3">3 seats</option>
-                  <option value="4">4 seats</option>
-                </select>
-              </div>
-
-              <div className="relative">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Price per seat</label>
-                <DollarSign size={20} className="absolute left-3 top-11 text-gray-400" />
-                <input
-                  type="number"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleChange}
-                  placeholder="0"
-                  min="0"
-                  className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-3">
-              <input
-                type="checkbox"
-                name="recurring"
-                checked={formData.recurring}
-                onChange={handleChange}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <label className="text-sm text-gray-700">This is a recurring trip</label>
-            </div>
-
-            <button
+            {/* Submit Button */}
+            <Button
               type="submit"
-              className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              disabled={isSubmitting}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg"
             >
-              Offer Ride
-            </button>
+              {isSubmitting ? (
+                <>
+                  <LoadingSpinner size="sm" className="mr-2" />
+                  Publishing Ride...
+                </>
+              ) : (
+                'Publish Ride'
+              )}
+            </Button>
           </form>
         </div>
       </div>
