@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Home, Search, MessageCircle, User, Plus } from 'lucide-react';
 
 interface MobileLayoutProps {
@@ -7,13 +8,15 @@ interface MobileLayoutProps {
   activeTab?: string;
 }
 
-const MobileLayout = ({ children, activeTab = 'home' }: MobileLayoutProps) => {
+const MobileLayout = ({ children, activeTab }: MobileLayoutProps) => {
+  const location = useLocation();
+  
   const navItems = [
-    { id: 'home', icon: Home, label: 'Home' },
-    { id: 'search', icon: Search, label: 'Find Rides' },
-    { id: 'create', icon: Plus, label: 'Offer Ride' },
-    { id: 'messages', icon: MessageCircle, label: 'Messages' },
-    { id: 'profile', icon: User, label: 'Profile' },
+    { id: 'home', icon: Home, label: 'Home', path: '/' },
+    { id: 'search', icon: Search, label: 'Find Rides', path: '/find-rides' },
+    { id: 'create', icon: Plus, label: 'Offer Ride', path: '/offer-ride' },
+    { id: 'messages', icon: MessageCircle, label: 'Messages', path: '/messages' },
+    { id: 'profile', icon: User, label: 'Profile', path: '/profile' },
   ];
 
   return (
@@ -28,10 +31,11 @@ const MobileLayout = ({ children, activeTab = 'home' }: MobileLayoutProps) => {
         <div className="flex justify-around items-center max-w-md mx-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = activeTab === item.id;
+            const isActive = activeTab ? activeTab === item.id : location.pathname === item.path;
             return (
-              <button
+              <Link
                 key={item.id}
+                to={item.path}
                 className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
                   isActive 
                     ? 'text-blue-600 bg-blue-50' 
@@ -40,7 +44,7 @@ const MobileLayout = ({ children, activeTab = 'home' }: MobileLayoutProps) => {
               >
                 <Icon size={20} />
                 <span className="text-xs mt-1 font-medium">{item.label}</span>
-              </button>
+              </Link>
             );
           })}
         </div>
