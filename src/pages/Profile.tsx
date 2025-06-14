@@ -4,6 +4,7 @@ import MobileLayout from '../components/Layout/MobileLayout';
 import { User, Star, Car, MessageCircle, Settings, LogOut, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,6 +20,7 @@ import {
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const userStats = [
     { label: 'Rides Completed', value: '24' },
@@ -32,6 +34,8 @@ const Profile = () => {
       title: "Signed Out",
       description: "You have been successfully signed out.",
     });
+    // In a real app, this would clear auth tokens and redirect
+    navigate('/');
   };
 
   const handleEditProfile = () => {
@@ -42,6 +46,14 @@ const Profile = () => {
         description: "Your profile changes have been saved.",
       });
     }
+  };
+
+  const handleFindRide = () => {
+    navigate('/find-rides');
+  };
+
+  const handleOfferRide = () => {
+    navigate('/offer-ride');
   };
 
   const menuItems = [
@@ -114,10 +126,20 @@ const Profile = () => {
           <div className="bg-gradient-to-r from-green-500 to-blue-500 rounded-lg p-4 text-white">
             <h3 className="font-semibold mb-2">Ready to ride?</h3>
             <div className="flex space-x-2">
-              <Button variant="secondary" size="sm" className="flex-1">
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                className="flex-1"
+                onClick={handleFindRide}
+              >
                 Find a Ride
               </Button>
-              <Button variant="secondary" size="sm" className="flex-1">
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                className="flex-1"
+                onClick={handleOfferRide}
+              >
                 Offer a Ride
               </Button>
             </div>

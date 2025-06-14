@@ -2,8 +2,11 @@
 import React from 'react';
 import MobileLayout from '../components/Layout/MobileLayout';
 import { MessageCircle, User, Clock } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const Messages = () => {
+  const { toast } = useToast();
+  
   const conversations = [
     {
       id: '1',
@@ -31,6 +34,13 @@ const Messages = () => {
     }
   ];
 
+  const handleConversationClick = (conversation: any) => {
+    toast({
+      title: `Opening chat with ${conversation.name}`,
+      description: "Chat functionality will be available soon!"
+    });
+  };
+
   return (
     <MobileLayout>
       <div className="min-h-screen bg-gray-50">
@@ -53,6 +63,7 @@ const Messages = () => {
               {conversations.map((conversation) => (
                 <div
                   key={conversation.id}
+                  onClick={() => handleConversationClick(conversation)}
                   className="bg-white rounded-lg p-4 border border-gray-100 hover:shadow-md transition-shadow cursor-pointer"
                 >
                   <div className="flex items-center space-x-3">

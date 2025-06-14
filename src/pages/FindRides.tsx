@@ -8,6 +8,7 @@ import LoadingSpinner from '../components/ui/loading-spinner';
 import LocationMap from '../components/Map/LocationMap';
 import { useRideSearch } from '../hooks/useRideSearch';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 interface LocationData {
   address: string;
@@ -23,8 +24,10 @@ const FindRides = () => {
   const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [mapMode, setMapMode] = useState<'pickup' | 'destination'>('pickup');
+  const [showFilters, setShowFilters] = useState(false);
   
   const { rides, isLoading, hasSearched, searchRides } = useRideSearch();
+  const { toast } = useToast();
 
   const handleSearch = () => {
     if (fromLocation && toLocation) {
@@ -32,6 +35,12 @@ const FindRides = () => {
         from: fromLocation.address, 
         to: toLocation.address, 
         date 
+      });
+    } else {
+      toast({
+        title: "Missing Location",
+        description: "Please select both pickup and destination locations.",
+        variant: "destructive"
       });
     }
   };
@@ -58,6 +67,14 @@ const FindRides = () => {
   const openMapForDestination = () => {
     setMapMode('destination');
     setShowMap(true);
+  };
+
+  const handleFilterToggle = () => {
+    setShowFilters(!showFilters);
+    toast({
+      title: "Filters",
+      description: showFilters ? "Filters hidden" : "Filters shown"
+    });
   };
 
   if (showMap) {
@@ -148,7 +165,7 @@ const FindRides = () => {
               <h2 className="text-xl font-bold text-gray-900">
                 {rides.length > 0 ? `${rides.length} Rides Found` : 'No Rides Found'}
               </h2>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={handleFilterToggle}>
                 <Filter size={16} className="mr-1" />
                 Filter
               </Button>
