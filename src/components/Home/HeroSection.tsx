@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Car, Users, DollarSign, Leaf } from 'lucide-react';
+import { Car, Users, DollarSign, Leaf, Plus } from 'lucide-react';
 
 const HeroSection = () => {
   const features = [
