@@ -85,8 +85,8 @@ This project is built with modern web technologies:
 
 1. **Clone the repository**
 ```bash
-git clone <YOUR_GIT_URL>
-cd <YOUR_PROJECT_NAME>
+git clone https://github.com/yourusername/CarpoolConnect.git
+cd CarpoolConnect
 ```
 
 2. **Install dependencies**
@@ -107,23 +107,6 @@ Navigate to `http://localhost:5173` to view the app
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build locally
 - `npm run lint` - Run ESLint for code quality
-
-## 🌐 Deployment
-
-### Easy Deployment with Lovable
-1. Open your [Lovable Project](https://lovable.dev/projects/198e9940-2dc2-4c51-8e1f-3684d0d1c0e9)
-2. Click **Share → Publish** for instant deployment
-
-### Custom Domain
-Connect your own domain through Project > Settings > Domains in Lovable.
-
-### Self-Hosting Options
-The app can be deployed to any static hosting service:
-- Vercel
-- Netlify
-- GitHub Pages
-- AWS S3 + CloudFront
-- Any other static hosting provider
 
 ## 🔧 Development
 
@@ -157,17 +140,3 @@ We welcome contributions! Please:
 3. Make your changes
 4. Test thoroughly on mobile devices
 5. Submit a pull request
-
-## 📄 License
-
-This project is open source and available under the MIT License.
-
-## 🔗 Links
-
-- **Live Demo**: [CarpoolConnect App](https://lovable.dev/projects/198e9940-2dc2-4c51-8e1f-3684d0d1c0e9)
-- **Development**: Edit in [Lovable](https://lovable.dev/projects/198e9940-2dc2-4c51-8e1f-3684d0d1c0e9)
-- **Documentation**: [Lovable Docs](https://docs.lovable.dev/)
-
----
-
-Built with ❤️ using [Lovable](https://lovable.dev) - The AI-powered web app builder
