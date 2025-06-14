@@ -5,26 +5,74 @@ import { Search, MapPin, Calendar, Filter } from 'lucide-react';
 import RideCard from '../components/Rides/RideCard';
 import RideBookingDialog from '../components/Rides/RideBookingDialog';
 import LoadingSpinner from '../components/ui/loading-spinner';
+import LocationMap from '../components/Map/LocationMap';
 import { useRideSearch } from '../hooks/useRideSearch';
 import { Button } from '@/components/ui/button';
 
+interface LocationData {
+  address: string;
+  lat: number;
+  lng: number;
+}
+
 const FindRides = () => {
-  const [fromLocation, setFromLocation] = useState('');
-  const [toLocation, setToLocation] = useState('');
+  const [fromLocation, setFromLocation] = useState<LocationData | null>(null);
+  const [toLocation, setToLocation] = useState<LocationData | null>(null);
   const [date, setDate] = useState('');
   const [selectedRide, setSelectedRide] = useState<any>(null);
   const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const [mapMode, setMapMode] = useState<'pickup' | 'destination'>('pickup');
   
   const { rides, isLoading, hasSearched, searchRides } = useRideSearch();
 
   const handleSearch = () => {
-    searchRides({ from: fromLocation, to: toLocation, date });
+    if (fromLocation && toLocation) {
+      searchRides({ 
+        from: fromLocation.address, 
+        to: toLocation.address, 
+        date 
+      });
+    }
   };
 
   const handleBookRide = (ride: any) => {
     setSelectedRide(ride);
     setIsBookingDialogOpen(true);
   };
+
+  const handleLocationSelect = (location: LocationData) => {
+    if (mapMode === 'pickup') {
+      setFromLocation(location);
+    } else {
+      setToLocation(location);
+    }
+    setShowMap(false);
+  };
+
+  const openMapForPickup = () => {
+    setMapMode('pickup');
+    setShowMap(true);
+  };
+
+  const openMapForDestination = () => {
+    setMapMode('destination');
+    setShowMap(true);
+  };
+
+  if (showMap) {
+    return (
+      <LocationMap
+        onLocationSelect={handleLocationSelect}
+        mode={mapMode}
+        onClose={() => setShowMap(false)}
+        initialLocation={mapMode === 'pickup' ? 
+          (fromLocation ? { lat: fromLocation.lat, lng: fromLocation.lng } : undefined) :
+          (toLocation ? { lat: toLocation.lat, lng: toLocation.lng } : undefined)
+        }
+      />
+    );
+  }
 
   return (
     <MobileLayout>
@@ -35,26 +83,32 @@ const FindRides = () => {
           
           {/* Search Form */}
           <div className="space-y-3">
-            <div className="relative">
+            <div 
+              onClick={openMapForPickup}
+              className="relative cursor-pointer"
+            >
               <MapPin size={20} className="absolute left-3 top-3 text-blue-200" />
-              <input
-                type="text"
-                placeholder="From where?"
-                value={fromLocation}
-                onChange={(e) => setFromLocation(e.target.value)}
-                className="w-full bg-white/10 border border-blue-400 rounded-lg pl-10 pr-4 py-3 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white"
-              />
+              <div className="w-full bg-white/10 border border-blue-400 rounded-lg pl-10 pr-4 py-3 text-white min-h-[48px] flex items-center">
+                {fromLocation ? (
+                  <span className="text-white">{fromLocation.address}</span>
+                ) : (
+                  <span className="text-blue-200">Tap to select pickup location</span>
+                )}
+              </div>
             </div>
             
-            <div className="relative">
+            <div 
+              onClick={openMapForDestination}
+              className="relative cursor-pointer"
+            >
               <MapPin size={20} className="absolute left-3 top-3 text-blue-200" />
-              <input
-                type="text"
-                placeholder="To where?"
-                value={toLocation}
-                onChange={(e) => setToLocation(e.target.value)}
-                className="w-full bg-white/10 border border-blue-400 rounded-lg pl-10 pr-4 py-3 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white"
-              />
+              <div className="w-full bg-white/10 border border-blue-400 rounded-lg pl-10 pr-4 py-3 text-white min-h-[48px] flex items-center">
+                {toLocation ? (
+                  <span className="text-white">{toLocation.address}</span>
+                ) : (
+                  <span className="text-blue-200">Tap to select destination</span>
+                )}
+              </div>
             </div>
             
             <div className="relative">
@@ -69,8 +123,8 @@ const FindRides = () => {
             
             <Button 
               onClick={handleSearch}
-              disabled={isLoading}
-              className="w-full bg-white text-blue-600 font-semibold py-3 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
+              disabled={isLoading || !fromLocation || !toLocation}
+              className="w-full bg-white text-blue-600 font-semibold py-3 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
             >
               {isLoading ? (
                 <>
@@ -125,7 +179,7 @@ const FindRides = () => {
             </div>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-600">Enter your trip details above to find available rides.</p>
+              <p className="text-gray-600">Select your pickup and destination locations above to find available rides.</p>
             </div>
           )}
         </div>
