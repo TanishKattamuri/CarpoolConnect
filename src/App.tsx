@@ -9,6 +9,9 @@ import FindRides from "./pages/FindRides";
 import OfferRide from "./pages/OfferRide";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
+import MyRides from "./pages/MyRides";
+import Reviews from "./pages/Reviews";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +28,9 @@ const App = () => (
           <Route path="/offer-ride" element={<OfferRide />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/my-rides" element={<MyRides />} />
+          <Route path="/reviews" element={<Reviews />} />
+          <Route path="/settings" element={<Settings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

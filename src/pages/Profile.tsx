@@ -60,17 +60,17 @@ const Profile = () => {
     { 
       icon: Car, 
       label: 'My Rides', 
-      action: () => toast({ title: "Feature Coming Soon", description: "Ride history will be available soon!" })
+      action: () => navigate('/my-rides')
     },
     { 
       icon: MessageCircle, 
       label: 'Reviews', 
-      action: () => toast({ title: "Feature Coming Soon", description: "Review system will be available soon!" })
+      action: () => navigate('/reviews')
     },
     { 
       icon: Settings, 
       label: 'Settings', 
-      action: () => toast({ title: "Feature Coming Soon", description: "Settings page will be available soon!" })
+      action: () => navigate('/settings')
     }
   ];
 
