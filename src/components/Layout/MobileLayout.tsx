@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Search, MessageCircle, User, Plus } from 'lucide-react';
 
@@ -10,6 +9,11 @@ interface MobileLayoutProps {
 
 const MobileLayout = ({ children, activeTab }: MobileLayoutProps) => {
   const location = useLocation();
+  
+  // Scroll to top whenever the route changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
   
   const navItems = [
     { id: 'home', icon: Home, label: 'Home', path: '/' },
